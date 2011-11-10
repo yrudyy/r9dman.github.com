@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head>
   <meta charset='utf-8'>
-
+  <meta content="width=device-width; initial-scale=1.0; maximum-scale=2.0; user-scalable=1;" name="viewport">
   <title>r9dman's stuff @ GitHub</title>
   <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
   <style type="text/css">
@@ -28,6 +28,105 @@
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
   </style>
+  <style>
+button {
+width: 6em;
+height:6em;
+border: 1px solid red;
+background-color:#d0d0d0;
+}
+.txt {
+}
+</style>
+<script type="text/javascript">
+window.onload= function () {
+window.getTheMeta= function () {
+var metas= document.getElementsByTagName('meta');
+var n= metas.length;
+while (n--) {
+if (metas[n].name === "viewport") {
+break;
+}
+}
+return metas[n];
+};
+window.zoomA= function (p) {
+var e= getTheMeta();
+if (!e) { return; }
+var parent= e.parentNode;
+var nextSibling= e.nextSibling;
+parent.removeChild(e);
+e= document.createElement('meta');
+e.name= "viewport";
+e.content= "width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;";
+parent.insertBefore(e, nextSibling);
+setTimeout(function(){
+parent.removeChild(e);
+e.content= "width=device-width; initial-scale="+ p+ ".0; maximum-scale=2.0; user-scalable=1;";
+parent.insertBefore(e, nextSibling);
+}, 0);
+};
+window.zoomB= function (p) {
+var e= getTheMeta();
+if (!e) { return; }
+e.content= "width=device-width; initial-scale="+ p+ ".0; maximum-scale=2.0; user-scalable=1;";
+};
+window.onresize= function () {
+if (!window.scale.resizePending) {
+//window.scale("resize");
+}
+};
+window.scale= (function () {
+var savedScale= 1.0;
+var savedWidth= document.body.offsetWidth;
+var savedHeight= document.body.offsetHeight;
+if (typeof WebKitCSSMatrix == "object") {
+document.body.style.webkitTransformOrigin= "0% 0%";
+document.body.style.webkitTransform= "scale(1.0)";
+return function scale (p) {
+if (p === "+") {
+savedScale+= 0.1;
+} else if (p === "-") {
+savedScale-= 0.1;
+} else if (p === 1) {
+savedScale= 1;
+} else if (p === "resize") {
+document.body.style.webkitTransform= "scale(1.0)";
+document.body.style.width= "";
+document.body.style.height= "";
+if (!window.scale.resizePending) {
+window.scale.resizePending= true;
+setTimeout(function () {
+savedWidth= document.body.offsetWidth;
+savedHeight= document.body.offsetHeight;
+scale();
+window.scale.resizePending= false;
+}, 0);
+}
+return;
+}
+if (savedScale < 0.1 ) {
+savedScale= 0.1;
+}
+if (savedScale > 1) {
+document.body.style.width= (savedScale* savedWidth) + "px";
+document.body.style.height= (savedScale* savedHeight)+ "px";
+} else {
+document.body.style.width= "";
+document.body.style.height= "";
+}
+document.body.style.webkitTransform= "scale("+ savedScale+ ")";
+}
+} else {
+return function (p) {
+if (console && console.log) {
+console.log('oops, no webkitTransform(s)');
+}
+};
+}
+})();
+};
+</script>
 </head>
 
 <body>
@@ -46,7 +145,22 @@
       <span class="small">by <a href="http://github.com/r9dman">r9dman</a></span></h1>
 
     <div class="description">
-      some stuff
+      <p>
+    <a href="http://groups.google.com/group/iphonewebdev/browse_thread/thread/bb68400f108ef142">iPhone web dev thread</a>
+  </p>
+  <p>
+    <button onclick="zoomA(1);">scale 1.0</button>
+    <button onclick="zoomA(2);">scale 2.0</button>
+  </p>
+  <p>
+    <button onclick="zoomB(1);">scale 1.0</button>
+    <button onclick="zoomB(2);">scale 2.0</button>
+  </p>
+  <p>
+    <button onclick="scale(1);">scale 1</button>
+    <button onclick="scale('+');">scale +</button>
+    <button onclick="scale('-');">scale -</button> (WORKS !)
+  </p>
     </div>
 
     <h2>Contact</h2>
